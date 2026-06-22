@@ -6,9 +6,9 @@ Enterprise-style Spring Boot REST API inspired by BMC Helix. It handles incident
 
 Fill these after cloud deployment:
 
-- API Base URL: `https://your-app-url`
-- Swagger UI: `https://your-app-url/swagger-ui/index.html`
-- OpenAPI JSON: `https://your-app-url/v3/api-docs`
+- API Base URL: `https://incident-rca-api.onrender.com`
+- Swagger UI: `https://incident-rca-api.onrender.com/swagger-ui/index.html`
+- OpenAPI JSON: `https://incident-rca-api.onrender.com/v3/api-docs`
 
 ## Demo Credentials
 
