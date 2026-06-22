@@ -1,0 +1,1 @@
+package com.interview.incidentrca.repository;import com.interview.incidentrca.entity.*;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface IncidentStatusHistoryRepository extends JpaRepository<IncidentStatusHistory,Long>{List<IncidentStatusHistory> findByIncidentIdOrderByChangedAtAsc(Long id);}

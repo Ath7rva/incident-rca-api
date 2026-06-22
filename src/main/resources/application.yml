@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: incident-rca-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/incident_rca}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+server:
+  port: ${PORT:8080}
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-secret-change-this-secret-change-this-secret}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:1440}
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/index.html

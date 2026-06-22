@@ -1,0 +1,3 @@
+package com.interview.incidentrca.controller;
+import com.interview.incidentrca.dto.*;import com.interview.incidentrca.service.AuthService;import jakarta.validation.Valid;import lombok.RequiredArgsConstructor;import org.springframework.http.*;import org.springframework.web.bind.annotation.*;
+@RestController @RequestMapping("/api/auth") @RequiredArgsConstructor public class AuthController{private final AuthService auth; @PostMapping("/register") ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest r){return ResponseEntity.status(HttpStatus.CREATED).body(auth.register(r));} @PostMapping("/login") AuthResponse login(@Valid @RequestBody LoginRequest r){return auth.login(r);} }

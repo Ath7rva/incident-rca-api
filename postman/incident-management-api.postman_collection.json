@@ -1,0 +1,13 @@
+{
+  "info": {"name": "Incident RCA API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [{"key":"baseUrl","value":"https://your-app-url"},{"key":"token","value":""}],
+  "item": [
+    {"name":"Login Admin","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/auth/login","body":{"mode":"raw","raw":"{\n  \"email\": \"admin@incidentrca.dev\",\n  \"password\": \"Admin@123\"\n}"}}},
+    {"name":"Create Incident","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/incidents","body":{"mode":"raw","raw":"{\n  \"title\": \"Payment API returning 503 after release\",\n  \"description\": \"External gateway timeout after deployment\",\n  \"severity\": \"CRITICAL\",\n  \"serviceName\": \"Payment Gateway\",\n  \"assignedEngineerId\": 2\n}"}}},
+    {"name":"List Incidents","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/api/incidents?page=0&size=10&sort=createdAt,desc"}},
+    {"name":"Incident Timeline","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/api/incidents/1/timeline"}},
+    {"name":"Root Cause Suggestions","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/api/incidents/1/root-cause-suggestions"}},
+    {"name":"Analytics Severity","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/api/analytics/severity"}},
+    {"name":"Audit Logs","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{token}}"}],"url":"{{baseUrl}}/api/audit-logs"}}
+  ]
+}

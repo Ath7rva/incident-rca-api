@@ -1,0 +1,6 @@
+package com.interview.incidentrca.repository;import com.interview.incidentrca.entity.*;import com.interview.incidentrca.enums.*;import org.springframework.data.jpa.repository.*;import org.springframework.data.repository.query.Param;import org.springframework.data.domain.*;import java.time.Instant;import java.util.*;
+public interface IncidentRepository extends JpaRepository<Incident,Long>{
+ @Query("select i from Incident i where (:status is null or i.status=:status) and (:severity is null or i.severity=:severity) and (:service is null or lower(i.serviceComponent.name) like lower(concat('%',:service,'%'))) and (:engineerId is null or i.assignedEngineer.id=:engineerId) and (:from is null or i.createdAt>=:from) and (:to is null or i.createdAt<=:to)")
+ Page<Incident> search(@Param("status") IncidentStatus status,@Param("severity") Severity severity,@Param("service") String service,@Param("engineerId") Long engineerId,@Param("from") Instant from,@Param("to") Instant to,Pageable pageable);
+ List<Incident> findByStatusIn(Collection<IncidentStatus> statuses); long countBySeverity(Severity severity); long countByStatus(IncidentStatus status); long countByResolvedAtIsNullAndCreatedAtBefore(Instant cutoff);
+}

@@ -1,0 +1,3 @@
+package com.interview.incidentrca.service;
+import com.interview.incidentrca.entity.User;import com.interview.incidentrca.exception.ResourceNotFoundException;import com.interview.incidentrca.repository.UserRepository;import lombok.RequiredArgsConstructor;import org.springframework.security.core.context.SecurityContextHolder;import org.springframework.stereotype.Service;
+@Service @RequiredArgsConstructor public class CurrentUserService{private final UserRepository users; public User user(){String email=SecurityContextHolder.getContext().getAuthentication().getName();return users.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("Current user not found"));}}

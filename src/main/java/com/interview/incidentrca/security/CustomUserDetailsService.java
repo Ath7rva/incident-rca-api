@@ -1,0 +1,3 @@
+package com.interview.incidentrca.security;
+import com.interview.incidentrca.repository.UserRepository;import lombok.RequiredArgsConstructor;import org.springframework.security.core.userdetails.*;import org.springframework.stereotype.Service;
+@Service @RequiredArgsConstructor public class CustomUserDetailsService implements UserDetailsService{private final UserRepository users; public UserDetails loadUserByUsername(String email){var u=users.findByEmail(email).orElseThrow(()->new UsernameNotFoundException(email));return org.springframework.security.core.userdetails.User.withUsername(u.getEmail()).password(u.getPassword()).roles(u.getRole().name()).build();}}

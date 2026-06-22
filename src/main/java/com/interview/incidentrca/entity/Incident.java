@@ -1,0 +1,4 @@
+package com.interview.incidentrca.entity;
+import com.interview.incidentrca.enums.*;import jakarta.persistence.*;import lombok.*;import java.time.Instant;
+@Entity @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Incident { @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id; @Column(nullable=false) private String title; @Column(nullable=false,length=4000) private String description; @Enumerated(EnumType.STRING) @Column(nullable=false) private Severity severity; @Enumerated(EnumType.STRING) @Column(nullable=false) private IncidentStatus status; @ManyToOne(optional=false) private ServiceComponent serviceComponent; @ManyToOne private User assignedEngineer; @ManyToOne(optional=false) private User createdBy; @Column(nullable=false) private Instant createdAt; private Instant updatedAt; private Instant resolvedAt; }

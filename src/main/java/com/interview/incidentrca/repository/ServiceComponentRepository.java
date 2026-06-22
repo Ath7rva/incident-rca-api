@@ -1,0 +1,1 @@
+package com.interview.incidentrca.repository;import com.interview.incidentrca.entity.ServiceComponent;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface ServiceComponentRepository extends JpaRepository<ServiceComponent,Long>{Optional<ServiceComponent> findByNameIgnoreCase(String name);}
