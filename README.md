@@ -20,6 +20,22 @@ Seeded users:
 | ENGINEER | `engineer@incidentrca.dev` | `Engineer@123` |
 | VIEWER | `viewer@incidentrca.dev` | `Viewer@123` |
 
+## Quick Interview Demo
+
+Open Swagger UI and try the read-only APIs directly. No login is required for:
+
+- `GET /api/incidents`
+- `GET /api/incidents/{id}`
+- `GET /api/incidents/{id}/timeline`
+- `GET /api/incidents/{id}/root-cause-suggestions`
+- `GET /api/incidents/{id}/duplicates`
+- `GET /api/analytics/severity`
+- `GET /api/analytics/status`
+- `GET /api/analytics/top-services`
+- `GET /api/analytics/sla-breaches`
+
+JWT login is required only for write/admin actions like creating incidents, changing status, assigning engineers, adding comments, deleting incidents, and viewing audit logs.
+
 ## Tech Stack
 
 Java 17, Spring Boot 3, Spring Web, Spring Data JPA, PostgreSQL, Spring Security JWT, Spring Validation, Swagger/OpenAPI, Lombok, Maven, Docker, JUnit, Mockito.
