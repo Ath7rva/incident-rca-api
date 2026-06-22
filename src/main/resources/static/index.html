@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incident RCA API Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #5f6b7a;
+      --line: #dde4ee;
+      --blue: #1f6feb;
+      --green: #12805c;
+      --amber: #a15c00;
+      --red: #c62828;
+      --soft-blue: #eaf2ff;
+      --soft-green: #e8f7f1;
+      --soft-amber: #fff4df;
+      --soft-red: #ffebeb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: #122033;
+      color: white;
+      padding: 28px 20px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .top {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 24px;
+      align-items: center;
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 48px); line-height: 1.1; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    h3 { margin: 0 0 8px; font-size: 17px; }
+    p { margin: 0 0 12px; }
+    .muted { color: var(--muted); }
+    header .muted { color: #c6d0df; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    a.button, button {
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      background: var(--blue);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      min-height: 40px;
+    }
+    a.button.secondary, button.secondary { background: #31445f; }
+    main { padding: 24px 20px 40px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      min-width: 0;
+    }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-12 { grid-column: span 12; }
+    .metric { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .critical, .breached { color: var(--red); background: var(--soft-red); }
+    .high, .near { color: var(--amber); background: var(--soft-amber); }
+    .ok, .resolved { color: var(--green); background: var(--soft-green); }
+    .info { color: var(--blue); background: var(--soft-blue); }
+    .list { display: grid; gap: 10px; }
+    .incident {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcff;
+      cursor: pointer;
+    }
+    .incident:hover { border-color: var(--blue); }
+    .incident.active { border-color: var(--blue); box-shadow: 0 0 0 2px var(--soft-blue); }
+    .timeline { display: grid; gap: 10px; }
+    .event { border-left: 3px solid var(--blue); padding-left: 12px; }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #101827;
+      color: #dce8ff;
+      border-radius: 8px;
+      padding: 14px;
+      max-height: 360px;
+      overflow: auto;
+    }
+    .explain {
+      background: #eef6ff;
+      border: 1px solid #c9defc;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .bar {
+      height: 10px;
+      background: #e8edf4;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .bar > span { display: block; height: 100%; background: var(--blue); }
+    footer { color: var(--muted); padding: 0 20px 28px; }
+    @media (max-width: 860px) {
+      .top, .grid { grid-template-columns: 1fr; }
+      .span-4, .span-5, .span-6, .span-7, .span-12 { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap top">
+      <div>
+        <h1>Incident Management & Root Cause Analysis Demo</h1>
+        <p class="muted">A simple view of the Spring Boot API. This page explains what is happening without forcing anyone to understand Swagger first.</p>
+        <div class="actions">
+          <a class="button" href="/swagger-ui/index.html">Open Swagger</a>
+          <a class="button secondary" href="https://github.com/Ath7rva/incident-rca-api">GitHub Repo</a>
+        </div>
+      </div>
+      <div class="explain">
+        <h3>Baby version</h3>
+        <p>An incident means something broke in production. This backend tracks the issue, who owns it, SLA risk, possible root cause, duplicate issues, and analytics.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="grid">
+      <div class="card span-4">
+        <h2>Total Incidents</h2>
+        <div id="totalIncidents" class="metric">...</div>
+        <p class="muted">Production issues currently stored in PostgreSQL.</p>
+      </div>
+      <div class="card span-4">
+        <h2>Critical Incidents</h2>
+        <div id="criticalCount" class="metric">...</div>
+        <p class="muted">Most serious incidents that need fast action.</p>
+      </div>
+      <div class="card span-4">
+        <h2>Top Service</h2>
+        <div id="topService" class="metric">...</div>
+        <p class="muted">Service affected most often in seed data.</p>
+      </div>
+
+      <div class="card span-5">
+        <h2>1. Incidents</h2>
+        <p class="muted">Click an incident to see its status, timeline, RCA, and duplicates.</p>
+        <div id="incidentList" class="list"></div>
+      </div>
+
+      <div class="card span-7">
+        <h2>2. Selected Incident</h2>
+        <div id="incidentDetails">Loading...</div>
+      </div>
+
+      <div class="card span-6">
+        <h2>3. Timeline</h2>
+        <p class="muted">This is the incident story: created, assigned, status changed, comments added.</p>
+        <div id="timeline" class="timeline">Select an incident.</div>
+      </div>
+
+      <div class="card span-6">
+        <h2>4. Root Cause Suggestions</h2>
+        <p class="muted">Rule-based AI-like engine suggests possible causes with confidence.</p>
+        <div id="rca">Select an incident.</div>
+      </div>
+
+      <div class="card span-6">
+        <h2>5. Duplicate Detection</h2>
+        <p class="muted">Finds similar open incidents so teams do not work on the same issue twice.</p>
+        <div id="duplicates">Select an incident.</div>
+      </div>
+
+      <div class="card span-6">
+        <h2>6. Analytics</h2>
+        <p class="muted">Dashboard-style counts for managers and support leads.</p>
+        <div id="analytics">Loading analytics...</div>
+      </div>
+
+      <div class="card span-12">
+        <h2>How To Explain This In Interview</h2>
+        <p>This is an enterprise incident management backend inspired by tools like BMC Helix. It is not just CRUD. It has lifecycle, assignment, SLA tracking, comments, timeline, audit logs, analytics, duplicate detection, and explainable root cause suggestions.</p>
+        <p class="muted">Read-only demo APIs are public for easy review. Write/admin APIs still need JWT security.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Render free tier may sleep after inactivity, so first load can be slow.
+  </footer>
+
+  <script>
+    const api = '';
+    let selectedId = null;
+
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    }[c]));
+
+    async function getJson(path) {
+      const res = await fetch(api + path);
+      if (!res.ok) throw new Error(path + ' returned ' + res.status);
+      return res.json();
+    }
+
+    function severityClass(value) {
+      const v = String(value || '').toLowerCase();
+      if (v.includes('critical')) return 'critical';
+      if (v.includes('high')) return 'high';
+      if (v.includes('within') || v.includes('resolved')) return 'ok';
+      if (v.includes('near')) return 'near';
+      if (v.includes('breach')) return 'breached';
+      return 'info';
+    }
+
+    function renderIncidentList(incidents) {
+      document.getElementById('incidentList').innerHTML = incidents.map(item => `
+        <div class="incident ${item.id === selectedId ? 'active' : ''}" onclick="selectIncident(${item.id})">
+          <h3>#${item.id} ${esc(item.title)}</h3>
+          <span class="pill ${severityClass(item.severity)}">${esc(item.severity)}</span>
+          <span class="pill info">${esc(item.status)}</span>
+          <span class="pill ${severityClass(item.slaState)}">${esc(item.slaState)}</span>
+          <p class="muted">${esc(item.serviceName)}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderIncidentDetails(item) {
+      document.getElementById('incidentDetails').innerHTML = `
+        <h3>#${item.id} ${esc(item.title)}</h3>
+        <p>${esc(item.description)}</p>
+        <p>
+          <span class="pill ${severityClass(item.severity)}">Severity: ${esc(item.severity)}</span>
+          <span class="pill info">Status: ${esc(item.status)}</span>
+          <span class="pill ${severityClass(item.slaState)}">SLA: ${esc(item.slaState)}</span>
+        </p>
+        <p><strong>Service:</strong> ${esc(item.serviceName)}</p>
+        <p><strong>Assigned engineer:</strong> ${esc(item.assignedEngineer?.name || 'Not assigned')}</p>
+        <p><strong>Created by:</strong> ${esc(item.createdBy?.name || 'System')}</p>
+      `;
+    }
+
+    async function selectIncident(id) {
+      selectedId = id;
+      const [incident, timeline, rca, duplicates] = await Promise.all([
+        getJson(`/api/incidents/${id}`),
+        getJson(`/api/incidents/${id}/timeline`),
+        getJson(`/api/incidents/${id}/root-cause-suggestions`),
+        getJson(`/api/incidents/${id}/duplicates`)
+      ]);
+      renderIncidentDetails(incident);
+      renderTimeline(timeline);
+      renderRca(rca);
+      renderDuplicates(duplicates);
+      loadIncidents();
+    }
+
+    function renderTimeline(events) {
+      document.getElementById('timeline').innerHTML = events.map(e => `
+        <div class="event">
+          <strong>${esc(e.type)}</strong>
+          <p>${esc(e.details)}</p>
+          <p class="muted">${esc(e.actor)} · ${new Date(e.timestamp).toLocaleString()}</p>
+        </div>
+      `).join('') || '<p>No timeline events.</p>';
+    }
+
+    function renderRca(items) {
+      document.getElementById('rca').innerHTML = items.map(s => `
+        <div class="event">
+          <strong>${esc(s.category)}</strong>
+          <p>${esc(s.explanation)}</p>
+          <div class="bar"><span style="width:${Math.max(0, Math.min(100, s.confidenceScore))}%"></span></div>
+          <p class="muted">Confidence: ${s.confidenceScore}%</p>
+        </div>
+      `).join('') || '<p>No suggestions yet.</p>';
+    }
+
+    function renderDuplicates(items) {
+      document.getElementById('duplicates').innerHTML = items.map(d => `
+        <div class="event">
+          <strong>Possible duplicate: #${d.incidentId}</strong>
+          <p>${esc(d.title)}</p>
+          <p class="muted">Similarity: ${d.similarityScore}%</p>
+        </div>
+      `).join('') || '<p>No strong duplicates found.</p>';
+    }
+
+    async function loadIncidents() {
+      const page = await getJson('/api/incidents?page=0&size=10&sort=createdAt,desc');
+      document.getElementById('totalIncidents').textContent = page.totalElements ?? page.content.length;
+      renderIncidentList(page.content);
+      if (!selectedId && page.content.length) selectIncident(page.content[0].id);
+    }
+
+    async function loadAnalytics() {
+      const [severity, top] = await Promise.all([
+        getJson('/api/analytics/severity'),
+        getJson('/api/analytics/top-services')
+      ]);
+      const critical = severity.find(x => x.label === 'CRITICAL')?.count ?? 0;
+      document.getElementById('criticalCount').textContent = critical;
+      document.getElementById('topService').textContent = top[0]?.label || 'None';
+      document.getElementById('analytics').innerHTML = `
+        <h3>Severity Count</h3>
+        ${severity.map(x => `<p><span class="pill ${severityClass(x.label)}">${esc(x.label)}</span> ${x.count}</p>`).join('')}
+        <h3>Top Affected Services</h3>
+        ${top.map(x => `<p><strong>${esc(x.label)}</strong>: ${x.count}</p>`).join('')}
+      `;
+    }
+
+    async function boot() {
+      try {
+        await Promise.all([loadIncidents(), loadAnalytics()]);
+      } catch (err) {
+        document.querySelector('main').innerHTML = `<div class="card"><h2>Could not load demo</h2><p>${esc(err.message)}</p><p>Render free tier may be waking up. Refresh once after a minute.</p></div>`;
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>
